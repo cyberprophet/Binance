@@ -2,6 +2,7 @@
 
 using RestSharp;
 
+using ShareInvest.Binance.Converters;
 using ShareInvest.Binance.Models;
 using ShareInvest.Crypto;
 
@@ -28,18 +29,20 @@ public class Quotation(string? baseUrl = null) : ShareQuotation(string.IsNullOrE
         return await ExecuteAsync(new RestRequest(nameof(exchangeInfo)), cts.Token);
     }
 
-    public async Task<ExchangeInfo[]?> GetMarketAsync()
+    public async Task<ExchangeInfo?> GetMarketAsync()
     {
-        return deserializeContent(await GetMarketAsync(true));
+        var response = await GetMarketAsync(true);
+
+        return deserializeContent(response);
     }
 
-    public async Task<ExchangeInfo[]?> GetMarketAsync(string[]? permissions = null, params string[] symbols)
+    public async Task<ExchangeInfo?> GetMarketAsync(string[]? permissions = null, params string[] symbols)
     {
         if (symbols.Length == 1)
         {
             var res = await GetMarketAsync(symbols[0], permissions: permissions ?? []);
 
-            return res != null ? [res] : [];
+            return res;
         }
 
         if (symbols.Length == 0)
@@ -66,7 +69,10 @@ public class Quotation(string? baseUrl = null) : ShareQuotation(string.IsNullOrE
             return null;
         }
 
-        return JsonConvert.DeserializeObject<ExchangeInfo>(res.Content);
+        return JsonConvert.DeserializeObject<ExchangeInfo>(res.Content, new JsonSerializerSettings
+        {
+            Converters = new[] { new FilterConverter() }
+        });
     }
 
     string RebuildQuery(string resource, string[]? permissions)
@@ -86,11 +92,14 @@ public class Quotation(string? baseUrl = null) : ShareQuotation(string.IsNullOrE
         return string.Concat(resource, permissions[0]);
     }
 
-    readonly Func<RestResponse, ExchangeInfo[]?> deserializeContent = res =>
+    readonly Func<RestResponse, ExchangeInfo?> deserializeContent = res =>
     {
-        return HttpStatusCode.OK == res.StatusCode && !string.IsNullOrEmpty(res.Content) ?
+        return HttpStatusCode.OK != res.StatusCode || string.IsNullOrEmpty(res.Content) ? null :
 
-            JsonConvert.DeserializeObject<ExchangeInfo[]>(res.Content) : null;
+            JsonConvert.DeserializeObject<ExchangeInfo>(res.Content, new JsonSerializerSettings
+            {
+                Converters = new[] { new FilterConverter() }
+            });
     };
 
     readonly Func<string[], StringBuilder> makeStrArrQuery = args =>

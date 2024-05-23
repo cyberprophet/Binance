@@ -12,8 +12,4 @@ public class MaxNumIcebergOrdersFilter : Filter
     {
         get; set;
     }
-    /*{
-  "filterType": "",
-  "": 5
-}*/
 }

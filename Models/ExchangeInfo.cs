@@ -34,7 +34,7 @@ public class ExchangeInfo
     /// All filters are optional.
     /// </summary>
     [DataMember, JsonProperty("exchangeFilters"), JsonPropertyName("exchangeFilters")]
-    public ExchangeFilter[]? ExchangeFilters
+    public List<Filter>? ExchangeFilters
     {
         get; set;
     }

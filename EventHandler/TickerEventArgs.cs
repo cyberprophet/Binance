@@ -1,14 +1,14 @@
-﻿namespace ShareInvest.Binance.EventHandler;
+﻿using Newtonsoft.Json;
 
-public class TickerEventArgs : EventArgs
+using ShareInvest.Binance.Models;
+
+namespace ShareInvest.Binance.EventHandler;
+
+public class TickerEventArgs(string json) : EventArgs
 {
-    public object Ticker
+    public RealTicker? Ticker
     {
         get;
     }
-
-    public TickerEventArgs()
-    {
-
-    }
+        = JsonConvert.DeserializeObject<RealTicker>(json);
 }

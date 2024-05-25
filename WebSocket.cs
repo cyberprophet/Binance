@@ -72,12 +72,13 @@ public class WebSocket(string? baseUrl = null) : ShareWebSocket<TickerEventArgs>
     /// ]</param>
     public async Task RequestAsync(string method, params object[] @params)
     {
-        await base.RequestAsync(JsonConvert.SerializeObject(new
+        var json = JsonConvert.SerializeObject(new
         {
             method,
             @params,
             id = id++
-        }));
+        });
+        await base.RequestAsync(json);
     }
 
     public override async Task RequestAsync(string json)

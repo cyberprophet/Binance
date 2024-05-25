@@ -2,6 +2,8 @@
 
 using ShareInvest.Binance.Converters;
 
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
@@ -9,7 +11,7 @@ namespace ShareInvest.Binance.Models;
 
 public class Market
 {
-    [DataMember, JsonProperty("symbol"), JsonPropertyName("symbol")]
+    [DataMember, JsonProperty("symbol"), JsonPropertyName("symbol"), Key]
     public string? Code
     {
         get; set;
@@ -112,31 +114,31 @@ public class Market
         get; set;
     }
 
-    [DataMember, JsonProperty("orderTypes"), JsonPropertyName("orderTypes")]
+    [DataMember, JsonProperty("orderTypes"), JsonPropertyName("orderTypes"), NotMapped]
     public OrderTypes[]? OrderTypes
     {
         get; set;
     }
 
-    [DataMember, JsonProperty("permissionSets"), JsonPropertyName("permissionSets"), Newtonsoft.Json.JsonConverter(typeof(PermissionSetsConverter))]
+    [DataMember, JsonProperty("permissionSets"), JsonPropertyName("permissionSets"), Newtonsoft.Json.JsonConverter(typeof(PermissionSetsConverter)), NotMapped]
     public List<List<Permissions>>? PermissionSets
     {
         get; set;
     }
 
-    [DataMember, JsonProperty("permissions"), JsonPropertyName("permissions")]
+    [DataMember, JsonProperty("permissions"), JsonPropertyName("permissions"), NotMapped]
     public Permissions[]? Permissions
     {
         get; set;
     }
 
-    [DataMember, JsonProperty("filters"), JsonPropertyName("filters")]
+    [DataMember, JsonProperty("filters"), JsonPropertyName("filters"), NotMapped]
     public List<Filter>? Filters
     {
         get; set;
     }
 
-    [DataMember, JsonProperty("allowedSelfTradePreventionModes"), JsonPropertyName("allowedSelfTradePreventionModes")]
+    [DataMember, JsonProperty("allowedSelfTradePreventionModes"), JsonPropertyName("allowedSelfTradePreventionModes"), NotMapped]
     public AllowedSelfTradePreventionModes[]? AllowedSelfTradePreventionModes
     {
         get; set;
